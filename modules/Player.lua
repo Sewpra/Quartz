@@ -123,6 +123,7 @@ end
 function Player:OnEnable()
 	if WoWRetail then
 		self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED", "UpdateChannelingTicks")
+		self:RegisterEvent("TRAIT_CONFIG_UPDATED", "UpdateChannelingTicks")
 	end
 
 	self.Bar:RegisterEvents()
@@ -214,13 +215,13 @@ end
 
 local sparkfactory = {
 	__index = function(t,k)
-		local spark = castBar:CreateTexture(nil, 'OVERLAY')
+		local spark = castBar:CreateTexture(nil, "OVERLAY")
 		t[k] = spark
-		spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
+		spark:SetTexture("Interface\\AddOns\\WeakAuras\\Media\\Textures\\Square_FullWhite")
 		spark:SetVertexColor(unpack(Quartz3.db.profile.sparkcolor))
-		spark:SetBlendMode('ADD')
-		spark:SetWidth(20)
-		spark:SetHeight(db.h*2.2)
+		spark:SetBlendMode("DISABLE")
+		spark:SetWidth(1.2)
+		spark:SetHeight(27)
 		return spark
 	end
 }
@@ -305,13 +306,14 @@ local channelingTicks = WoWWrath and {
 	-- priest
 	[GetSpellInfo(64843)] = 4, -- divine hymn
 	[GetSpellInfo(15407)] = 6, -- mind flay
+	[GetSpellInfo(391403)] = 4, -- mind flay: insanity
 	[GetSpellInfo(47540)] = 3, -- penance
-	[GetSpellInfo(205065)] = 5, -- void torrent
+	[GetSpellInfo(263165)] = 5, -- void torrent
 	[GetSpellInfo(64901)] = 5, -- symbol of hope
 	-- mage
 	[GetSpellInfo(5143)] = 5, -- arcane missiles
 	[GetSpellInfo(205021)] = 5, -- ray of frost
-	[GetSpellInfo(314791)] = 4, -- covenant: shifting power
+	[GetSpellInfo(382440)] = 4, -- covenant: shifting power
 	-- monk
 	[GetSpellInfo(117952)] = 4, -- crackling jade lightning
 	[GetSpellInfo(191837)] = 3, -- essence font
@@ -337,7 +339,8 @@ function Player:UpdateChannelingTicks()
 	if WoWRetail then
 		if playerClass == "PRIEST" then
 			-- Castigation talent adds a tick to penance
-			channelingTicks[GetSpellInfo(47540)] = isTalentKnown(19752) and 4 or 3
+			--channelingTicks[GetSpellInfo(47540)] = isTalentKnown(19752) and 4 or 3
+			channelingTicks[GetSpellInfo(47540)] = IsPlayerSpell(193134) and 4 or 3
 		end
 	end
 end
